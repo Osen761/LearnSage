@@ -1,76 +1,97 @@
 import os
-import time
-from dotenv import load_dotenv  # Import dotenv
-
 import google.generativeai as genai
+from dotenv import load_dotenv
+from mimetypes import guess_type
+import logging
+from document import DocumentLoader
+from langchain.text_splitter import RecursiveCharacterTextSplitter
 
-# Load environment variables from .env file
+# Load environment variables
 load_dotenv()
 
-genai.configure(api_key=os.environ["GEMINI_API_KEY"])
-
-def upload_to_gemini(path, mime_type=None):
-  """Uploads the given file to Gemini."""
-  file = genai.upload_file(path, mime_type=mime_type)
-  print(f"Uploaded file '{file.display_name}' as: {file.uri}")
-  return file
-
-def wait_for_files_active(files):
-  """Waits for the given files to be active."""
-  print("Waiting for file processing...")
-  for name in (file.name for file in files):
-    file = genai.get_file(name)
-    while file.state.name == "PROCESSING":
-      print(".", end="", flush=True)
-      time.sleep(10)
-      file = genai.get_file(name)
-    if file.state.name != "ACTIVE":
-      raise Exception(f"File {file.name} failed to process")
-  print("...all files ready")
-  print()
+# Set your API key from .env file and update the environment variable
+api_key = os.getenv("GOOGLE_API_KEY")
+if api_key:
+    os.environ["GOOGLE_API_KEY"] = api_key
+else:
+    raise ValueError("GOOGLE_API_KEY not found in .env file")
 
 generation_config = {
-  "temperature": 1,
-  "top_p": 0.95,
-  "top_k": 64,
-  "max_output_tokens": 8192,
-  "response_mime_type": "text/plain",
+    "temperature": 1,
+    "top_p": 0.95,
+    "top_k": 64,
+    "max_output_tokens": 8192,
+    "response_mime_type": "text/plain",
 }
 
-model = genai.GenerativeModel(
-  model_name="gemini-1.5-flash",
-  generation_config=generation_config,
-)
+# Create a client
+client = genai.GenerativeModel(model_name="gemini-1.5-pro", generation_config=generation_config)
 
-files = [
-  upload_to_gemini("Sherlock Jr. (1924) - 10 Min Clip", mime_type="video/mp4"),
-]
+def upload_to_gemini(path, mime_type=None):
+    """Uploads the given file to Gemini.
 
-wait_for_files_active(files)
+    See https://ai.google.dev/gemini-api/docs/prompting_with_media
+    """
+    file = genai.upload_file(path, mime_type=mime_type)
+    print(f"Uploaded file '{file.display_name}' as: {file.uri}")
+    return file
 
-chat_session = model.start_chat(
-  history=[
-    {
-      "role": "user",
-      "parts": [
-        files[0],
-      ],
-    },
-    {
-      "role": "user",
-      "parts": [
-        "what is in this video \n",
-      ],
-    },
-    {
-      "role": "model",
-      "parts": [
-        "This is a silent film from the early 1900s called \"The Sleuth\". It is a comedy, and a good example of the early days of film making. ",
-      ],
-    },
-  ]
-)
+def split_into_chunks(content, chunk_size=1000, chunk_overlap=200):
+    """Splits the text content into chunks using LangChain."""
+    text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
+    return text_splitter.split_text(content)
 
-response = chat_session.send_message("INSERT_INPUT_HERE")
+def analyze(question, image_path=None, video_path=None, document_path=None):
+    """Analyzes an image, video, or document.
 
-print(response.text)
+    Args:
+        question: The question to be answered.
+        image_path: Local path to the image file (optional).
+        video_path: Local path to the video file (optional).
+        document_path: Local path to the document file (optional).
+
+    Returns:
+        The model's response as text.
+    """
+    uploaded_files = []
+    all_document_content = ""
+
+    if image_path:
+        mime_type, _ = guess_type(image_path)
+        if not mime_type:
+            logging.error(f"Could not determine the MIME type of {image_path}")
+            return None
+        image_file = upload_to_gemini(image_path, mime_type=mime_type)
+        uploaded_files.append(image_file)
+
+    if video_path:
+        mime_type, _ = guess_type(video_path)
+        if not mime_type:
+            logging.error(f"Could not determine the MIME type of {video_path}")
+            return None
+        video_file = upload_to_gemini(video_path, mime_type=mime_type)
+        uploaded_files.append(video_file)
+
+    if document_path:
+        loader = DocumentLoader(path=document_path)
+        documents = loader.load()
+        for doc in documents:
+            all_document_content += doc['raw_content'] + "\n\n"
+        chunks = split_into_chunks(all_document_content)
+
+    # Select the first two chunks
+    selected_chunks = chunks[:2]
+
+    # Construct the prompt
+    prompt = f"You are a learning assistant. {question}\n\n" + "\n\n".join(selected_chunks)
+
+    # Generate response
+    response = client.generate_content([prompt], request_options={"timeout": 600})
+    return response.text
+
+# Example usage
+question = "Summarize the key points in the provided context below."
+document_path = "/home/osen/Downloads/LearnSage/documents"  # Replace with actual path
+
+analysis = analyze(question, document_path=document_path)
+print(analysis)
