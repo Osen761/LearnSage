@@ -48,13 +48,4 @@ class DocumentSearchAssistant:
         document_file_names = [os.path.basename(doc.metadata.get("path")) for doc in found_docs]
         return result, document_file_names
 
-# Example usage
-assistant = DocumentSearchAssistant()
 
-# search_results = assistant.search("what is chain of thought?")
-# print("Search Results:", search_results)
-
-answer, docs = assistant.retrieve_and_answer("what is chain of thought?")
-
-print("Answer:", answer) 
-print("Documents used:", docs)

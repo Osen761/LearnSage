@@ -4,6 +4,7 @@ from report_call import generate_report
 import asyncio
 from uploaded_files import indexing ,retriver
 import os
+from yt_audio import process_youtube_audio
 
 
 
@@ -73,7 +74,7 @@ elif page == "Generate Report":
 
 elif page == "Upload Files":
     # Define the path to the "input" folder within "documents_index"
-    documents_index_path = os.path.join(os.path.expanduser("~"), "LearnSage", "input")
+    documents_index_path = "input"
     # Ensure the "input" folder exists
     os.makedirs(documents_index_path, exist_ok=True)
 
@@ -94,7 +95,7 @@ elif page == "Upload Files":
         st.sidebar.text("Indexing in progress...")
         # Call your indexing function here, passing the path to the "input" folder
         indexer = indexing.DocumentIndexer()
-        indexer = (documents_index_path)
+        indexer = indexer.index_documents(documents_index_path)
         st.sidebar.text("Indexing completed.")
 
     # Function to list document titles in the "input" folder
@@ -113,7 +114,7 @@ elif page == "Upload Files":
         st.write("Asking question about the upploaded files:",)
         st.write("Question:", question)
         retriver = retriver.DocumentSearchAssistant()
-        answer, docs = retriver.retrieve_and_answer("what is chain of thought?")
+        answer, docs = retriver.retrieve_and_answer(question)
         st.write("Answer:", answer)
         st.write("Documents used:", docs)
         # Call your question answering function here, using st.session_state.api_key and selected_file_data
@@ -177,5 +178,7 @@ elif page == "Interact with YouTube":
     if st.button("Ask Question"):
         st.write("Asking question about the YouTube video:", st.session_state.youtube_url)
         st.write("Question:", question)
+        answer = asyncio.run(process_youtube_audio(st.session_state.youtube_url, question))
+        st.write("Answer:", answer)
         # Call your question answering function here, using st.session_state.api_key and st.session_state.youtube_url
 

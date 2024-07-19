@@ -27,25 +27,5 @@ async def generate_report(query, report_type):
     
     return report
 
-if __name__ == "__main__":
-    # User input for query
-    query = input("Enter your research query: ")
-    
-    # Selection for report type
-    report_type = input("Select report type (research_report, summary, detailed_analysis): ")
-    
-    # Run the main function asynchronously and generate the report
-    report = asyncio.run(generate_report(query, report_type))
-    print('Report generated successfully!')
-    
-    # Convert the report to PDF
-    pdf_filename = "research_report.pdf"
-    markdown_to_pdf(report, pdf_filename)
-    
-    # Display the report in the console
-    print('Research Report:')
-    print(report)
-    
-    # Inform the user that the report is saved as a PDF
-    print(f'Research report saved as {pdf_filename}.')
+
 
