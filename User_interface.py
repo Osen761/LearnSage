@@ -2,12 +2,29 @@ import streamlit as st
 from web_exploler import search_and_generate_response
 from report_call import generate_report
 import asyncio
-from uploaded_files import indexing ,retriver
+from uploaded_files import indexing, retriver
 import os
-from yt_audio import process_youtube_audio
+from yt_audio import process_youtube_audio_and_answer_query
+import tempfile
+import shutil
+from google_api import analyze_documents, analyze_images, analyze_videos
+from General_qn_Chatbot import general_chatbot
+from summarization import summary
+from QandA import generate_and_answer, generate_questions
 
+# Initialize session state for storing responses
+if 'responses' not in st.session_state:
+    st.session_state.responses = []
 
+# Function to save responses to a text file
+def save_responses(responses):
+    with open('responses.txt', 'w') as f:
+        for response in responses:
+            f.write(f"{response[0]}: {response[1]}\n")
+            f.write(f"Answer: {response[2]}\n\n")
 
+# Call the function to save responses
+save_responses(st.session_state.responses)
 
 # Add API key input at the top of the sidebar
 st.sidebar.title("Configuration")
@@ -20,8 +37,17 @@ if st.sidebar.button("Submit"):
 if st.sidebar.button("Start New Learning Session"):
     # Reset or clear session state
     st.session_state.clear()  # Clears all session state
+    st.session_state.responses = []
     st.sidebar.write("New learning session started. All previous data has been cleared.")
     st.experimental_rerun()  # Rerun the app to reset the state
+
+if st.sidebar.button("Learning Style"):
+    learning_style = st.sidebar.selectbox("Choose your learning style:", ["Auditory", "Read/Write", "Kinesthetic"])
+    st.sidebar.write(f"You selected {learning_style} learning style.")
+    
+    # # Store the learning style in a config file
+    # with open('.config', 'w') as f:
+    #     f.write(f'LEARNING_STYLE="{learning_style}"')
 
 # Quick Internet Search in Sidebar
 st.sidebar.subheader("Quick Internet Search")
@@ -30,7 +56,6 @@ if st.sidebar.button("Search"):
     st.sidebar.write("Searching for:", search_query)
     results = search_and_generate_response(search_query)
     st.sidebar.write(results)
-    # Call your quick internet search function here, using st.session_state.api_ke
 
 
 # Home Page
@@ -48,29 +73,45 @@ st.write("""
 
 # Sidebar Navigation
 page = st.sidebar.selectbox("Choose a feature", [
-    "Home", "Generate Report", "Upload Files", "Summarize Documents", 
-    "Ask Questions","Interact with YouTube", "Download Summary", "Generate Q&A"])
+    "Ask Questions", "Generate Report", "Interact With your Files", "Summarize Documents", 
+    "Interact with Images", "Interact With Videos", "Upload Files", "Summarize Documents", 
+    "Interact with YouTube", "Download Summary", "Generate Q&A"])
 
-if page == "Home":
-    st.subheader("Home")
-    st.write("Select a feature from the sidebar.")
+if page == "Ask Questions":
+    st.subheader("Ask Questions")
+    question = st.text_input("Enter your question")
+    if st.button("Ask"):
+        st.write("Answering question:", question)
+        if 'responses' not in st.session_state:
+            st.session_state.responses = ""
+        answer,updated_sesssion_memory = general_chatbot(question,learning_style,st.session_state.responses)
+        st.session_state.responses = updated_sesssion_memory 
+        st.session_state.responses.append(("Question", question, answer))
+        st.write(answer)
 
 elif page == "Generate Report":
     st.subheader("Generate a Report")
     report_topic = st.text_input("Enter the topic for the report")
-    report_types = st.selectbox('select a report format',["Research Report","Resource_report","Outline_report"])
+    report_types = st.selectbox('select a report format', ["Research Report", "Resource_report", "Outline_report"])
     report_format = st.selectbox("Select report format", ["PDF"])
     if st.button("Generate Report"):
         st.write("Generating report for:", report_topic)
         st.write("Report format:", report_format)
         st.write("Report type:", report_types)
         # Call your report generation function here
-        report = asyncio.run(generate_report(report_topic,report_format))
+        report = asyncio.run(generate_report(report_topic, report_format))
         st.success("Report generated successfully!")
         # Display the generated report
         st.write("Report content:")
-        # Display the report content here
+        st.session_state.responses.append(("Report", report_topic, report))
         st.write(report)
+        st.write("Download the report using the button below.")
+        st.download_button(
+            label="Download Report",
+            data=report,
+            file_name=f"{report_topic}.pdf",
+            mime="application/pdf"
+        )
 
 elif page == "Upload Files":
     # Define the path to the "input" folder within "documents_index"
@@ -95,7 +136,7 @@ elif page == "Upload Files":
         st.sidebar.text("Indexing in progress...")
         # Call your indexing function here, passing the path to the "input" folder
         indexer = indexing.DocumentIndexer()
-        indexer = indexer.index_documents(documents_index_path)
+        indexer.index_documents(documents_index_path)
         st.sidebar.text("Indexing completed.")
 
     # Function to list document titles in the "input" folder
@@ -111,59 +152,102 @@ elif page == "Upload Files":
     st.subheader("Interact with Uploaded Files")
     question = st.text_input("Enter your question for the uploaded file")
     if st.button("Ask Question"):
-        st.write("Asking question about the upploaded files:",)
+        st.write("Asking question about the uploaded files:",)
         st.write("Question:", question)
         retriver = retriver.DocumentSearchAssistant()
         answer, docs = retriver.retrieve_and_answer(question)
+        st.session_state.responses.append(("File Interaction", question, answer))
         st.write("Answer:", answer)
         st.write("Documents used:", docs)
-        # Call your question answering function here, using st.session_state.api_key and selected_file_data
 
 elif page == "Summarize Documents":
-    st.sidebar.subheader("Summarize Documents")
+    st.subheader("Summarize Documents")
     document = st.sidebar.file_uploader("Upload the document you want to summarize")
+    question = st.text_input("Enter your question for the document")
 
     if document:
         st.sidebar.write("Uploaded document:", document.name)
         st.session_state.document = document
+        
         if st.sidebar.button("Summarize"):
-            st.session_state.summary = "This is a placeholder summary. Replace this with actual summary generation logic."
-            # Call your document summarization function here, using st.session_state.api_key
-            # Example: st.session_state.summary = summarize_document(document, st.session_state.api_key)
+            st.sidebar.write("Summarizing document...")
+            summurizer = analyze_documents(question, document)
+            st.session_state.responses.append(("Document Summarization", document.name, summurizer))
+            st.write(summurizer)
 
-    if 'summary' in st.session_state:
-        st.subheader("Document Summary")
-        st.write(st.session_state.summary)
-        if st.button("Download Summary"):
-            st.download_button(
-                label="Download Summary",
-                data=st.session_state.summary,
-                file_name="summary.txt",
-                mime="text/plain"
-            )
+            if st.sidebar.button("Download Summary"):
+                st.download_button(
+                    label="Download Summary",
+                    data=summurizer,
+                    file_name="summary.txt",
+                    mime="text/plain"
+                )
 
+elif page == "Interact with Images":
+    st.subheader("Interact with Images")
+    uploaded_images = st.sidebar.file_uploader("Upload Images", type=['jpg', 'png'], accept_multiple_files=True)
+    question = st.text_input("Enter your question")
+    if st.button("Ask") and uploaded_images:
+        temp_file_paths = []  # List to store paths of temporary files
+        for uploaded_image in uploaded_images:
+            # Create a temporary file for each uploaded image
+            temp_file_path = tempfile.mktemp(suffix="." + uploaded_image.name.split('.')[-1])
+            # Copy the uploaded file content to the temporary file
+            with open(temp_file_path, "wb") as temp_file:
+                shutil.copyfileobj(uploaded_image, temp_file)
+            temp_file_paths.append(temp_file_path)
+        
+        st.write("Answering question:", question)
+        # Pass the list of temporary file paths to the analyze_images function
+        results = analyze_images(question, temp_file_paths)
+        st.session_state.responses.append(("Image Interaction", question, results))
+        st.write(results)
 
-elif page == "Ask Questions":
-    st.subheader("Ask General Questions")
+elif page == "Interact with Videos":
+    uploaded_videos = st.sidebar.file_uploader("Upload Videos", type=['mp4'], accept_multiple_files=True)
+    st.subheader("Interact with Videos")
     question = st.text_input("Enter your question")
     if st.button("Ask"):
+        temp_file_paths = []  # List to store paths of temporary files
+        for uploaded_video in uploaded_videos:
+            # Create a temporary file for each uploaded video
+            temp_file_path = tempfile.mktemp(suffix="." + uploaded_video.name.split('.')[-1])
+            # Copy the uploaded file content to the temporary file
+            with open(temp_file_path, "wb") as temp_file:
+                shutil.copyfileobj(uploaded_video, temp_file)
+            temp_file_paths.append(temp_file_path)
         st.write("Answering question:", question)
-        # Call your question answering function here
-        # Display the answer in a chat-like format
+        # Pass the list of temporary file paths to the analyze_videos function
+        results = analyze_videos(question, temp_file_paths)
+        st.session_state.responses.append(("Video Interaction", question, results))
+        st.write(results)
 
 elif page == "Download Summary":
     st.subheader("Download Summary of the Learning Session")
     download_format = st.selectbox("Select download format", ["PDF", "Word", "Text"])
     if st.button("Download"):
         st.write("Downloading summary of the learning session in", download_format, "format")
-        # Call your download summary function here
+        summary = summary(learning_style,st.session_state.responses)
+        st.download_button(
+            label="Download Summary",
+            data=summary,
+            file_name=f"summary.{download_format.lower()}",
+            mime="application/pdf"
+        )
 
 elif page == "Generate Q&A":
     st.subheader("Generate Questions and Answers")
     question_type = st.selectbox("Select question type", ["Multiple Choice", "Short Answer", "True/False"])
-    if st.button("Generate"):
-        st.write("Generating", question_type, "questions and answers based on the learning session")
-        # Call your Q&A generation function here
+    if st.sidebar.button("Generate"):
+        st.write("Generating", question_type, "Questions and Answers based on the learning session")
+        questions = generate_questions(st.session_state.responses, question_type)
+        st.write("Questions:")
+        st.write(questions)
+        if st.button("Answer Questions"):
+            qa_content = generate_and_answer(st.session_state.responses, question_type, question_type)
+            st.write("Answers:")
+            st.session_state.responses.append(("Q&A Generation", questions, qa_content))
+            st.write(qa_content)
 
 elif page == "Interact with YouTube":
     st.sidebar.subheader("Interact with YouTube")
@@ -178,7 +262,6 @@ elif page == "Interact with YouTube":
     if st.button("Ask Question"):
         st.write("Asking question about the YouTube video:", st.session_state.youtube_url)
         st.write("Question:", question)
-        answer = asyncio.run(process_youtube_audio(st.session_state.youtube_url, question))
+        answer = asyncio.run(process_youtube_audio_and_answer_query(st.session_state.youtube_url, question))
+        st.session_state.responses.append(("YouTube Interaction", question, answer))
         st.write("Answer:", answer)
-        # Call your question answering function here, using st.session_state.api_key and st.session_state.youtube_url
-

@@ -66,18 +66,3 @@ class DocumentLoader:
         """Splits the text content into chunks using LangChain."""
         text_splitter = RecursiveCharacterTextSplitter(chunk_size=chunk_size, chunk_overlap=chunk_overlap)
         return text_splitter.split_text(content)
-
-    
-
-def main():
-    loader = DocumentLoader(path="documents")  # Replace with your directory
-    documents = loader.load()
-    
-    all_content = ""
-    for doc in documents:
-        all_content += doc['raw_content'] + "\n\n"  # Adding a newline as a separator
-
-    print(all_content)  # This will print the concatenated content of all documents
-
-if __name__ == "__main__":
-    main()
