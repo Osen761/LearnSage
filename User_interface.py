@@ -180,7 +180,7 @@ elif page == "Summarize Documents":
                     label="Download Summary",
                     data=summurizer,
                     file_name="summary.txt",
-                    mime="text/plain"
+                    mime="application/pdf"
                 )
 
 elif page == "Interact with Images":

@@ -86,7 +86,8 @@ def analyze_images(question, image_paths):
     Analyzes images.
     """
     uploaded_files = process_images(image_paths)
-    prompt = f"You are an image analysis assistant. {question}\n\n"
+    prompt = f"You are an ai learing assistant called LearnSage. you are going to help learners analyse images and the answer any questions about the image 
+      {question}\n\n"
     response = client.generate_content([prompt,uploaded_files], request_options={"timeout": 600})
     return response.text
 
@@ -95,7 +96,8 @@ def analyze_videos(question, video_paths):
     Analyzes videos.
     """
     uploaded_files = process_videos(video_paths)
-    prompt = f"You are a video analysis assistant. {question}\n\n"
+    prompt = f"You are an ai learing assistant called LearnSage. you are going to help learners analyse videos and answer any questions about the video
+        {question}\n\n"
     response = client.generate_content([prompt,uploaded_files], request_options={"timeout": 600})
     return response.text
 
@@ -107,7 +109,8 @@ def analyze_documents(question, document_paths):
    # Select 3/4 of the chunks
     num_chunks = len(document_chunks)
     selected_chunks = document_chunks[:(3 * num_chunks) // 4]
-    prompt = f"You are a document analysis assistant. {question}\n\n" + "\n\n".join(selected_chunks)
+    prompt = f"You are an ai learing assistant called LearnSage. you are going to help learners analyse and summarize documents and the answer any questions about the documents  .
+      {question}\n\n" + "\n\n".join(selected_chunks)
     response = client.generate_content([prompt], request_options={"timeout": 600})
     return response.text
 
