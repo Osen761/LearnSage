@@ -5,7 +5,7 @@ from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 from markdown import markdown
 
-def summary(learning_style:str,text:str) -> tuple:
+def summary(learning_style:str,text:str) -> str:
     load_dotenv()
     output_parser = StrOutputParser()
 
@@ -29,7 +29,6 @@ def summary(learning_style:str,text:str) -> tuple:
 
     response = chain.invoke({"text": text, "learning_style": learning_style})
 
-    # Convert response to markdown
-    response_markdown = markdown(response)
+   
 
-    return response_markdown,
+    return response

@@ -18,7 +18,7 @@ Ans_prompt = ChatPromptTemplate.from_template(
 )
 
 # Initialize model
-model = ChatGoogleGenerativeAI()
+model = ChatGoogleGenerativeAI(model="gemini-1.5-pro" ,temperature=0)
 
 # Define chains
 Qn_chain = Qn_prompt | model | StrOutputParser()

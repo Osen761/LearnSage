@@ -5,26 +5,22 @@ import asyncio
 from uploaded_files import indexing, retriver
 import os
 from yt_audio import process_youtube_audio_and_answer_query
+from tempfile import NamedTemporaryFile
 import tempfile
 import shutil
 from google_api import analyze_documents, analyze_images, analyze_videos
 from General_qn_Chatbot import general_chatbot
 from summarization import summary
 from QandA import generate_and_answer, generate_questions
+from document_summarization import run_document_analysis
 
-# Initialize session state for storing responses
+# Initialize session state for storing responses and learning style
 if 'responses' not in st.session_state:
     st.session_state.responses = []
-
-# Function to save responses to a text file
-def save_responses(responses):
-    with open('responses.txt', 'w') as f:
-        for response in responses:
-            f.write(f"{response[0]}: {response[1]}\n")
-            f.write(f"Answer: {response[2]}\n\n")
-
-# Call the function to save responses
-save_responses(st.session_state.responses)
+elif not isinstance(st.session_state.responses, list):
+    st.session_state.responses = []
+if 'learning_style' not in st.session_state:
+    st.session_state.learning_style = ""
 
 # Add API key input at the top of the sidebar
 st.sidebar.title("Configuration")
@@ -36,18 +32,16 @@ if st.sidebar.button("Submit"):
 # Add "Start New Learning Session" button
 if st.sidebar.button("Start New Learning Session"):
     # Reset or clear session state
-    st.session_state.clear()  # Clears all session state
+    st.session_state.clear()  
     st.session_state.responses = []
+    st.session_state.learning_style = ""
     st.sidebar.write("New learning session started. All previous data has been cleared.")
     st.experimental_rerun()  # Rerun the app to reset the state
 
 if st.sidebar.button("Learning Style"):
     learning_style = st.sidebar.selectbox("Choose your learning style:", ["Auditory", "Read/Write", "Kinesthetic"])
+    st.session_state.learning_style = learning_style
     st.sidebar.write(f"You selected {learning_style} learning style.")
-    
-    # # Store the learning style in a config file
-    # with open('.config', 'w') as f:
-    #     f.write(f'LEARNING_STYLE="{learning_style}"')
 
 # Quick Internet Search in Sidebar
 st.sidebar.subheader("Quick Internet Search")
@@ -56,7 +50,6 @@ if st.sidebar.button("Search"):
     st.sidebar.write("Searching for:", search_query)
     results = search_and_generate_response(search_query)
     st.sidebar.write(results)
-
 
 # Home Page
 st.title('_:blue[LEARNSAGE]_ :sunglasses:')
@@ -73,7 +66,7 @@ st.write("""
 
 # Sidebar Navigation
 page = st.sidebar.selectbox("Choose a feature", [
-    "Ask Questions", "Generate Report", "Interact With your Files", "Summarize Documents", 
+    "Ask Questions", "Generate Report", "Interact with your Files", "Summarize Documents", 
     "Interact with Images", "Interact With Videos", "Upload Files", "Summarize Documents", 
     "Interact with YouTube", "Download Summary", "Generate Q&A"])
 
@@ -83,11 +76,11 @@ if page == "Ask Questions":
     if st.button("Ask"):
         st.write("Answering question:", question)
         if 'responses' not in st.session_state:
-            st.session_state.responses = ""
-        answer,updated_sesssion_memory = general_chatbot(question,learning_style,st.session_state.responses)
-        st.session_state.responses = updated_sesssion_memory 
+            st.session_state.responses = []
+        answer= general_chatbot(question, st.session_state.learning_style)
         st.session_state.responses.append(("Question", question, answer))
         st.write(answer)
+
 
 elif page == "Generate Report":
     st.subheader("Generate a Report")
@@ -113,7 +106,7 @@ elif page == "Generate Report":
             mime="application/pdf"
         )
 
-elif page == "Upload Files":
+elif page == "Interact with your Files":
     # Define the path to the "input" folder within "documents_index"
     documents_index_path = "input"
     # Ensure the "input" folder exists
@@ -147,61 +140,94 @@ elif page == "Upload Files":
     document_titles = list_document_titles(documents_index_path)
     for title in document_titles:
         st.sidebar.text(title)
-            
 
     st.subheader("Interact with Uploaded Files")
     question = st.text_input("Enter your question for the uploaded file")
     if st.button("Ask Question"):
-        st.write("Asking question about the uploaded files:",)
+        st.write("Asking question about the uploaded files:")
         st.write("Question:", question)
-        retriver = retriver.DocumentSearchAssistant()
-        answer, docs = retriver.retrieve_and_answer(question)
+        retriever_instance = retriver.DocumentSearchAssistant()
+        answer, docs = retriever_instance.retrieve_and_answer(question)
         st.session_state.responses.append(("File Interaction", question, answer))
         st.write("Answer:", answer)
         st.write("Documents used:", docs)
 
 elif page == "Summarize Documents":
-    st.subheader("Summarize Documents")
-    document = st.sidebar.file_uploader("Upload the document you want to summarize")
-    question = st.text_input("Enter your question for the document")
+    run_document_analysis()
+#     st.subheader("Summarize Documents")
+#     uploaded_files = st.file_uploader("Upload the documents you want to summarize", accept_multiple_files=True)
+#     question = st.text_input("Enter your question for the document")
 
-    if document:
-        st.sidebar.write("Uploaded document:", document.name)
-        st.session_state.document = document
+# if uploaded_files:
+#     document_paths = []
+
+#     # Ensure the "documents" folder exists
+#     if not os.path.exists('documents'):
+#         os.makedirs('documents')
+
+#     # Step 3: File Handling
+#     for uploaded_file in uploaded_files:
+#         # Save uploaded file to a temporary file in the "documents" directory
+#         with NamedTemporaryFile(delete=False, suffix=os.path.splitext(uploaded_file.name)[1], dir="documents") as tmp_file:
+#             tmp_file.write(uploaded_file.getvalue())
+#             document_paths.append(tmp_file.name)
+
+#     # Document selection for summarization
+#     st.subheader("Select Document for Summarization")
+#     document_files = [os.path.basename(path) for path in document_paths]
+#     selected_document = st.selectbox("Choose a document to summarize", document_files, key="document_selector")
+
+#     if st.button("Summarize") and selected_document:
+#         # Find the full path of the selected document
+#         document_path = next((path for path in document_paths if os.path.basename(path) == selected_document), None)
         
-        if st.sidebar.button("Summarize"):
-            st.sidebar.write("Summarizing document...")
-            summurizer = analyze_documents(question, document)
-            st.session_state.responses.append(("Document Summarization", document.name, summurizer))
-            st.write(summurizer)
+#         if document_path:
+#             st.write("Document path:", document_path)
+#             st.write("Summarizing document:", selected_document)
+#             # Analyze the selected document
+#             summarizer = analyze_documents(question, document_path)
+#             st.write(summarizer)
 
-            if st.sidebar.button("Download Summary"):
-                st.download_button(
-                    label="Download Summary",
-                    data=summurizer,
-                    file_name="summary.txt",
-                    mime="application/pdf"
-                )
+#             # Download summary button
+#             if summarizer:  # Check if summarizer has content
+#                 st.download_button(
+#                     label="Download Summary",
+#                     data=summarizer,
+#                     file_name="summary.txt",
+#                     mime="text/plain",  # Changed mime type to text/plain for .txt file
+#                     key="download_summary_button"
+#                 )
 
+#     # Step 5: Cleanup (optional)
+#     for path in document_paths:
+#         os.remove(path)
 elif page == "Interact with Images":
-    st.subheader("Interact with Images")
-    uploaded_images = st.sidebar.file_uploader("Upload Images", type=['jpg', 'png'], accept_multiple_files=True)
-    question = st.text_input("Enter your question")
-    if st.button("Ask") and uploaded_images:
-        temp_file_paths = []  # List to store paths of temporary files
-        for uploaded_image in uploaded_images:
-            # Create a temporary file for each uploaded image
-            temp_file_path = tempfile.mktemp(suffix="." + uploaded_image.name.split('.')[-1])
-            # Copy the uploaded file content to the temporary file
-            with open(temp_file_path, "wb") as temp_file:
-                shutil.copyfileobj(uploaded_image, temp_file)
-            temp_file_paths.append(temp_file_path)
+    st.title('Image Analysis App')
+
+    # Streamlit sidebar for inputs
+    question = st.text_input('Question', 'What is in this image?')
+    uploaded_files = st.sidebar.file_uploader("Choose images", accept_multiple_files=True, type=['jpg', 'jpeg', 'png'])
+
+    if uploaded_files:
+        image_paths = []
+        for uploaded_file in uploaded_files:
+            # Save the uploaded file to a temporary file
+            with tempfile.NamedTemporaryFile(delete=False, suffix=os.path.splitext(uploaded_file.name)[1]) as tmp:
+                tmp.write(uploaded_file.getvalue())
+                image_paths.append(tmp.name)
         
-        st.write("Answering question:", question)
-        # Pass the list of temporary file paths to the analyze_images function
-        results = analyze_images(question, temp_file_paths)
-        st.session_state.responses.append(("Image Interaction", question, results))
-        st.write(results)
+        if st.button('Analyze Images'):
+            # Call the analyze_images function
+            result = analyze_images(question, image_paths)
+            
+            # Display the result
+            st.write(result)
+            
+            # Clean up: Remove temporary files
+            for path in image_paths:
+                os.remove(path)
+    else:
+        st.sidebar.write("Please upload at least one image.")
 
 elif page == "Interact with Videos":
     uploaded_videos = st.sidebar.file_uploader("Upload Videos", type=['mp4'], accept_multiple_files=True)
@@ -227,10 +253,13 @@ elif page == "Download Summary":
     download_format = st.selectbox("Select download format", ["PDF", "Word", "Text"])
     if st.button("Download"):
         st.write("Downloading summary of the learning session in", download_format, "format")
-        summary = summary(learning_style,st.session_state.responses)
+        # Unpack the list in st.session_state.responses to a string
+        responses_str = ' '.join([' '.join(map(str, response)) for response in st.session_state.responses])
+        session_summary = summary(st.session_state.learning_style, responses_str)
+        st.write(session_summary)
         st.download_button(
             label="Download Summary",
-            data=summary,
+            data=session_summary,
             file_name=f"summary.{download_format.lower()}",
             mime="application/pdf"
         )
@@ -246,7 +275,6 @@ elif page == "Generate Q&A":
         if st.button("Answer Questions"):
             qa_content = generate_and_answer(st.session_state.responses, question_type, question_type)
             st.write("Answers:")
-            st.session_state.responses.append(("Q&A Generation", questions, qa_content))
             st.write(qa_content)
 
 elif page == "Interact with YouTube":
