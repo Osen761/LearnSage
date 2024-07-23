@@ -10,7 +10,7 @@ def search_and_generate_response(user_query):
     # Load environment variables
     load_dotenv()
     api_key = os.getenv("TAVILY_API_KEY")
-    google_api_key = "AIzaSyDXxh-z0KMy8jf2qZvirZdMW90oU2Ns7Co"
+ 
 
     # Initialize TavilyClient and AI model
     tavily = TavilyClient(api_key=api_key)
