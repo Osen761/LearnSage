@@ -100,6 +100,11 @@ def analyze_videos(question, video_paths):
     response = client.generate_content([prompt,uploaded_files], request_options={"timeout": 600})
     return response.text
 
+question = "What is the principle of superposition?"
+video_paths = ["/path/to/quantum_physics_video.mp4"]
+answer = analyze_videos(question, video_paths)
+print(answer)
+
 def analyze_documents(question, document_paths):
     """
     Analyzes documents.

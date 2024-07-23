@@ -25,9 +25,9 @@ Qn_chain = Qn_prompt | model | StrOutputParser()
 Ans_chain = Ans_prompt | model | StrOutputParser()
 
 # Function to generate questions
-def generate_questions(text: str, format: str) -> list:
+def generate_questions(text: str, format: str) -> str:
     response = Qn_chain.invoke({"text": text, "format": format})
-    return response.split("\n")
+    return response
 
 # Function to answer questions
 def answer_questions(text: str, format: str) -> str:

@@ -12,7 +12,6 @@ from google_api import analyze_documents, analyze_images, analyze_videos
 from General_qn_Chatbot import general_chatbot
 from summarization import summary
 from QandA import generate_and_answer, generate_questions
-from document_summarization import run_document_analysis
 
 # Initialize session state for storing responses and learning style
 if 'responses' not in st.session_state:
@@ -24,10 +23,19 @@ if 'learning_style' not in st.session_state:
 
 # Add API key input at the top of the sidebar
 st.sidebar.title("Configuration")
-google_api_key = st.sidebar.text_input("Gemini API Key", "", type="password")
+
+# Input fields for API keys
+google_api_key = st.sidebar.text_input("Google API Key", "", type="password")
+assemblyai_api_key = st.sidebar.text_input("AssemblyAI API Key", "", type="password")
+tivaly_api_key = st.sidebar.text_input("Tivaly API Key", "", type="password")
+
+# Submit button in the sidebar
 if st.sidebar.button("Submit"):
+    # Writing the API keys to the .env file
     with open('.env', 'w') as f:
-        f.write(f'GOOGLE_API_KEY="{google_api_key}"')
+        f.write(f'GOOGLE_API_KEY="{google_api_key}"\n')
+        f.write(f'ASSEMBLYAI_API_KEY="{assemblyai_api_key}"\n')
+        f.write(f'TIVALY_API_KEY="{tivaly_api_key}"\n')
 
 # Add "Start New Learning Session" button
 if st.sidebar.button("Start New Learning Session"):
@@ -153,54 +161,31 @@ elif page == "Interact with your Files":
         st.write("Documents used:", docs)
 
 elif page == "Summarize Documents":
-    run_document_analysis()
-#     st.subheader("Summarize Documents")
-#     uploaded_files = st.file_uploader("Upload the documents you want to summarize", accept_multiple_files=True)
-#     question = st.text_input("Enter your question for the document")
+    
+        st.title('Document Summarization')
 
-# if uploaded_files:
-#     document_paths = []
+        # Step 2: Streamlit UI Components
+        question = st.text_input("Question", "What is the main idea of the document?")
+        uploaded_files = st.file_uploader("Choose document(s)", accept_multiple_files=True)
+        analyze_button = st.button('Summarize...')
 
-#     # Ensure the "documents" folder exists
-#     if not os.path.exists('documents'):
-#         os.makedirs('documents')
+        if analyze_button and uploaded_files:
+            document_paths = []
 
-#     # Step 3: File Handling
-#     for uploaded_file in uploaded_files:
-#         # Save uploaded file to a temporary file in the "documents" directory
-#         with NamedTemporaryFile(delete=False, suffix=os.path.splitext(uploaded_file.name)[1], dir="documents") as tmp_file:
-#             tmp_file.write(uploaded_file.getvalue())
-#             document_paths.append(tmp_file.name)
+            # Step 3: File Handling
+            for uploaded_file in uploaded_files:
+                with NamedTemporaryFile(delete=False, suffix=os.path.splitext(uploaded_file.name)[1], dir="documents") as tmp_file:
+                    tmp_file.write(uploaded_file.getvalue())
+                    document_paths.append(tmp_file.name)
 
-#     # Document selection for summarization
-#     st.subheader("Select Document for Summarization")
-#     document_files = [os.path.basename(path) for path in document_paths]
-#     selected_document = st.selectbox("Choose a document to summarize", document_files, key="document_selector")
+            # Step 4: Analysis
+            if document_paths:
+                result = analyze_documents(question, document_paths)
+                st.write(result)
 
-#     if st.button("Summarize") and selected_document:
-#         # Find the full path of the selected document
-#         document_path = next((path for path in document_paths if os.path.basename(path) == selected_document), None)
-        
-#         if document_path:
-#             st.write("Document path:", document_path)
-#             st.write("Summarizing document:", selected_document)
-#             # Analyze the selected document
-#             summarizer = analyze_documents(question, document_path)
-#             st.write(summarizer)
-
-#             # Download summary button
-#             if summarizer:  # Check if summarizer has content
-#                 st.download_button(
-#                     label="Download Summary",
-#                     data=summarizer,
-#                     file_name="summary.txt",
-#                     mime="text/plain",  # Changed mime type to text/plain for .txt file
-#                     key="download_summary_button"
-#                 )
-
-#     # Step 5: Cleanup (optional)
-#     for path in document_paths:
-#         os.remove(path)
+            # Step 5: Cleanup (optional)
+            for path in document_paths:
+                os.remove(path)
 elif page == "Interact with Images":
     st.title('Image Analysis App')
 
@@ -220,7 +205,7 @@ elif page == "Interact with Images":
             # Call the analyze_images function
             result = analyze_images(question, image_paths)
             
-            # Display the result
+            # Display the resultt
             st.write(result)
             
             # Clean up: Remove temporary files
@@ -268,14 +253,26 @@ elif page == "Generate Q&A":
     st.subheader("Generate Questions and Answers")
     question_type = st.selectbox("Select question type", ["Multiple Choice", "Short Answer", "True/False"])
     if st.sidebar.button("Generate"):
+        responses_str = ' '.join([' '.join(map(str, response)) for response in st.session_state.responses])
         st.write("Generating", question_type, "Questions and Answers based on the learning session")
-        questions = generate_questions(st.session_state.responses, question_type)
+        
+        # Generate questions
+        questions = generate_questions(responses_str, question_type)
         st.write("Questions:")
         st.write(questions)
+        
+        # Store the generated questions for later use
+        st.session_state.generated_questions = questions
+        
         if st.button("Answer Questions"):
-            qa_content = generate_and_answer(st.session_state.responses, question_type, question_type)
-            st.write("Answers:")
-            st.write(qa_content)
+            # Ensure that generated_questions is available in the session state before proceeding
+            if 'generated_questions' in st.session_state:
+                # Use the stored questions as input for generating answers
+                qa_content = generate_and_answer(st.session_state.generated_questions, question_type)
+                st.write("Answers:")
+                st.write(qa_content)
+            else:
+                st.write("Please generate questions first.")
 
 elif page == "Interact with YouTube":
     st.sidebar.subheader("Interact with YouTube")
