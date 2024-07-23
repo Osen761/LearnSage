@@ -100,17 +100,12 @@ def analyze_videos(question, video_paths):
     response = client.generate_content([prompt,uploaded_files], request_options={"timeout": 600})
     return response.text
 
-question = "What is the principle of superposition?"
-video_paths = ["/path/to/quantum_physics_video.mp4"]
-answer = analyze_videos(question, video_paths)
-print(answer)
-
 def analyze_documents(question, document_paths):
     """
     Analyzes documents.
     """
     document_chunks = process_documents(document_paths)
-   # Select 3/4 of the chunks
+    # Select 3/4 of the chunks
     num_chunks = len(document_chunks)
     selected_chunks = document_chunks[:(3 * num_chunks) // 4]
     prompt = f"You are an ai learing assistant called LearnSage. you are going to help learners analyse and summarize documents and the answer any questions about the documents  .{question}\n\n" + "\n\n".join(selected_chunks)
