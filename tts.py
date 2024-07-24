@@ -1,7 +1,8 @@
 from gtts import gTTS
 import os
 import playsound
-from STT import transcribe_audio  # Import the transcribe_audio function
+from STT import transcribe_audio
+import streamlit as st  # Import the transcribe_audio function
 
 def text_to_speech(text, filename):
     tts = gTTS(text=text, lang='en')
@@ -9,7 +10,7 @@ def text_to_speech(text, filename):
     playsound.playsound(filename)
 
 # Assuming you have your API key and the file URL
-api_key = os.getenv("ASSEMBLYAI_API_KEY")
+api_key = st.secrets("ASSEMBLYAI_API_KEY")
 file_url = "https://github.com/AssemblyAI-Community/audio-examples/raw/main/20230607_me_canadian_wildfires.mp3"
 
 # Call the transcribe_audio function and store the returned text

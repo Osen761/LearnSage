@@ -1,56 +1,46 @@
 
 
-#  EDUASS Local File Search Engine
+# LearnSage: An AI Learning Assistant
 
-## Overview
+LearnSage is a personalized learning platform that provides interactive educational experiences tailored to your unique learning style. Whether you're a student, a professional, or a lifelong learner, LearnSage is here to support your journey.
 
-This application enables you to perform generative text search on local files using the Gemini API. It is developed primarily for local use and provides an interface to query and generate text based on the content found in your files.
+## Features
 
-### Features
+With LearnSage, you can:
 
-- **Local File Search:** Search through files stored locally on your computer.
-- **Gemini API Integration:** Utilize the Gemini API as a language model (LLM) or generator for text generation tasks.
-- **Cross-Platform Compatibility:** Optimized to run on various operating systems including Ubuntu.
+- **Ask Questions:** Ask any question and get instant answers.
+- **Generate Report:** Create a detailed report on a topic of your choice.
+- **Interact with your files:** Upload documents to interact with and analyze.
+- **Interact with images:** Upload images and ask questions.
+- **Summarize Documents:** Get a summary of your documents.
+- **Quick Internet Search:** Perform quick searches on the web.
+- **Download Summary:** Download a summary of your learning session.
+- **Generate Q&A:** Create questions and answers based on your learning material.
 
-## Getting Started
+## How It Works
 
-To get started with the application, follow these steps:
+1. **Get API Keys:**
+   First, obtain your API keys from the following services:
+   - [Google AI Studio](https://aistudio.google.com/)
+   - [Assembly AI](https://www.assemblyai.com/)
+   - [Tavily](https://www.tavily.com/)
 
-### Prerequisites
+2. **Upload Your Keys:**
+   Start by uploading your learning keys to personalize your experience.
 
-- Python installed on your system.
-- Git for cloning the repository.
-- Gemini api. 
+3. **Choose Your Learning Style:**
+   Select a learning style that best suits you—whether it's visual, auditory, or kinesthetic.
 
-### Installation
+4. **Select a Feature:**
+   Pick a feature from the sidebar, such as report generation, document interaction, or quick summaries, and start your learning journey.
 
-1. Clone the repository to your local machine:
+5. **Begin Learning:**
+   Dive into personalized content and interactive materials designed to enhance your learning process.
 
-   ```bash
-   git clone https://github.com/Osen761/Eduass
-   ```
+## Our Mission
 
-2. Navigate into the cloned directory:
+At Learning Sage, we believe that everyone has a unique way of learning. Our mission is to provide personalized educational experiences that help you achieve your goals. Whether you're a student, a professional, or a lifelong learner, Learning Sage is here to support your journey.
 
-   ```bash
-   cd eduass
-   ```
-
-3. Run the setup script to install dependencies and start the application:
-
-   ```bash
-   python setup.py
-   ```
-
-### Usage
-- go to [Google AI studio ](https://aistudio.google.com/app/) and get the Gemini api 
-- upload the documents you want to do the search about or the ones you want to interact with.
-- once the setup is complete, you can start using the application to perform local file searches and utilize the Gemini API for text generation.
-- Detailed usage instructions can be found [here.](https://oseninsights.tech)
-
-## Compatibility
-
-This application has been optimized to work on multiple operating systems including Ubuntu. However, it should generally work on other Linux distributions and macOS as well.
 
 ## Support
 

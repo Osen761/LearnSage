@@ -26,26 +26,23 @@ st.sidebar.title("Configuration")
 
 
 
-# Input fields for API keys
-google_api_key = st.sidebar.text_input("Google API Key", "", type="password")
-assemblyai_api_key = st.sidebar.text_input("AssemblyAI API Key", "", type="password")
-tivaly_api_key = st.sidebar.text_input("Tivaly API Key", "", type="password")
+# # Input fields for API keys
+# google_api_key = st.sidebar.text_input("Google API Key", "", type="password")
+# assemblyai_api_key = st.sidebar.text_input("AssemblyAI API Key", "", type="password")
+# tivaly_api_key = st.sidebar.text_input("Tivaly API Key", "", type="password")
 
-# Submit button in the sidebar
-if st.sidebar.button("Submit"):
-    # Storing the API keys in Streamlit's session state
-    st.session_state['GOOGLE_API_KEY'] = google_api_key
-    st.session_state['ASSEMBLYAI_API_KEY'] = assemblyai_api_key
-    st.session_state['TIVALY_API_KEY'] = tivaly_api_key
+# # Submit button in the sidebar
+# if st.sidebar.button("Submit"):
+#     # Storing the API keys in Streamlit's session state
+#     st.session_state['GOOGLE_API_KEY'] = google_api_key
+#     st.session_state['ASSEMBLYAI_API_KEY'] = assemblyai_api_key
+#     st.session_state['TIVALY_API_KEY'] = tivaly_api_key
     
-    # Writing the API keys to the .env file
-    with open('.env', 'w') as f:
-        f.write(f"GOOGLE_API_KEY={google_api_key}\n")
-        f.write(f"ASSEMBLYAI_API_KEY={assemblyai_api_key}\n")
-        f.write(f"TIVALY_API_KEY={tivaly_api_key}\n")
+   
+  
     
-    # Notify the user that the keys have been saved
-    st.sidebar.success("API keys saved and exported successfully!")
+#     # Notify the user that the keys have been saved
+#     st.sidebar.success("API keys saved and exported successfully!")
 
 # Add "Start New Learning Session" button
 if st.sidebar.button("Start New Learning Session"):

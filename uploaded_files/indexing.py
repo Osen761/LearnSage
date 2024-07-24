@@ -10,6 +10,7 @@ from qdrant_client.models import Distance, VectorParams
 from langchain_google_genai import GoogleGenerativeAIEmbeddings
 from langchain_qdrant import Qdrant
 from langchain_text_splitters import TokenTextSplitter
+import streamlit as st
 
 # Load environment variables
 load_dotenv()
@@ -24,7 +25,7 @@ class DocumentIndexer:
         self.model_name = model_name
         self.local_qdrant_path = local_qdrant_path
         self.collection_name = collection_name
-        self.embedding_model = GoogleGenerativeAIEmbeddings(model=model_name)
+        self.embedding_model = GoogleGenerativeAIEmbeddings(model=model_name, google_api_key=st.secrets["GOOGLE_API_KEY"])
         self.qdrant = None
 
     def get_files(self, dir):
@@ -86,8 +87,4 @@ class DocumentIndexer:
         print(onlyfiles)
         print("Finished indexing!")
 
-# Example usage
-if __name__ == "__main__":
-    indexer = DocumentIndexer()
-    mypath = "input"  # Replace with the actual path
-    indexer.index_documents(mypath)
+

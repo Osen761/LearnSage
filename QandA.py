@@ -2,6 +2,7 @@
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_google_genai import ChatGoogleGenerativeAI
+import streamlit as st
 
 # Define prompts
 Qn_prompt = ChatPromptTemplate.from_template(
@@ -18,7 +19,7 @@ Ans_prompt = ChatPromptTemplate.from_template(
 )
 
 # Initialize model
-model = ChatGoogleGenerativeAI(model="gemini-1.5-pro" ,temperature=0)
+model = ChatGoogleGenerativeAI(model="gemini-1.5-pro" ,temperature=0,google_api_key=st.secrets["GOOGLE_API_KEY"])
 
 # Define chains
 Qn_chain = Qn_prompt | model | StrOutputParser()

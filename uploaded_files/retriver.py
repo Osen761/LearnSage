@@ -6,6 +6,7 @@ from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmb
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.runnables import RunnablePassthrough
+import streamlit as st
 
 # Load environment variables
 load_dotenv()
@@ -32,7 +33,7 @@ class DocumentSearchAssistant:
             context += f"{i}\n{res.page_content}\n\n"
             mappings[i] = res.metadata.get("path")
     
-        model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0,)
+        model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0,google_api_key=st.secrets["GOOGLE_API_KEY"])
         prompt_template = (
             "Answer the user’s question using the documents given in the context. "
             "In the context are documents that should contain an answer. "

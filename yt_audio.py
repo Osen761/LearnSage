@@ -7,10 +7,10 @@ from langchain.chains import RetrievalQA
 from langchain_community.vectorstores import FAISS
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
 from langchain_text_splitters import RecursiveCharacterTextSplitter
-
+import streamlit as st
 # Load environment variables
 load_dotenv()
-ASSEMBLYAI_API_KEY = os.getenv("ASSEMBLYAI_API_KEY")
+ASSEMBLYAI_API_KEY = st.secrets["ASSEMBLYAI_API_KEY"]
 
 def transcribe_audio(file_path, api_key, max_retries=3):
     """Transcribe audio using AssemblyAI with retry logic."""
@@ -94,7 +94,7 @@ async def process_youtube_audio_and_answer_query(youtube_url, query, output_dir=
     def build_qa_chain(vector_store, query):
         """Build and run the QA chain."""
         qa_chain = RetrievalQA.from_chain_type(
-            llm=ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0),
+            llm=ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0,google_api_key=st.secrets["GOOGLE_API_KEY"]),
             chain_type="stuff",
             retriever=vector_store.as_retriever(),
         )

@@ -6,15 +6,16 @@ import google.generativeai as genai
 from document import DocumentLoader
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 import PIL.Image as PIL
+import streamlit as st 
 
 # Load environment variables
 load_dotenv()
 
 # Get API key from environment variables
-api_key = os.getenv("GOOGLE_API_KEY")
+api_key = st.secrets["GOOGLE_API_KEY"]
 if not api_key:
     raise ValueError("GOOGLE_API_KEY not found in .env file")
-os.environ["GOOGLE_API_KEY"] = api_key
+st.secrets["GOOGLE_API_KEY"] = api_key
 
 # Generation configuration
 generation_config = {

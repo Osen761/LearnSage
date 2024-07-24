@@ -3,6 +3,7 @@ import os
 from colorama import Fore, Style
 from langchain_core.messages import HumanMessage, SystemMessage
 from langchain_google_genai import ChatGoogleGenerativeAI
+import streamlit as st
 
 
 class GoogleProvider:
@@ -24,7 +25,7 @@ class GoogleProvider:
 
         """
         try:
-            api_key = os.environ["GOOGLE_API_KEY"]
+            api_key = st.secrets["GOOGLE_API_KEY"]
         except:
             raise Exception(
                 "GEMINI API key not found. Please set the GEMINI_API_KEY environment variable.")

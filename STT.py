@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 import assemblyai as aai
+import streamlit as st
 
 def transcribe_audio(file_url, api_key):
     """
@@ -47,7 +48,7 @@ def write_transcription_to_file(transcription, output_file):
 load_dotenv()
 
 # Get the API key from .env file
-ASSEMBLYAI_API_KEY = os.getenv("ASSEMBLYAI_API_KEY")
+ASSEMBLYAI_API_KEY = st.secrets("ASSEMBLYAI_API_KEY")
 
 # URL of the file to transcribe
 FILE_URL = "/home/osen/Music/input/audio.mp3"

@@ -4,6 +4,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 from markdown import markdown
+import streamlit as st
 
 def summary(learning_style:str,text:str) -> str:
     load_dotenv()
@@ -18,7 +19,7 @@ def summary(learning_style:str,text:str) -> str:
 
     prompt = ChatPromptTemplate.from_template(template=template)
 
-    model = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0,)
+    model = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0,google_api_key=st.secrets["GOOGLE_API_KEY"])
 
     chain = (
             RunnablePassthrough()
