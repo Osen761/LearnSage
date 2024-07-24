@@ -10,7 +10,7 @@ from langchain_text_splitters import RecursiveCharacterTextSplitter
 import streamlit as st
 # Load environment variables
 load_dotenv()
-ASSEMBLYAI_API_KEY = st.secrets["ASSEMBLYAI_API_KEY"]
+ASSEMBLYAI_API_KEY = os.environ["ASSEMBLYAI_API_KEY"] == st.secrets["ASSEMBLYAI_API_KEY"]
 
 def transcribe_audio(file_path, api_key, max_retries=3):
     """Transcribe audio using AssemblyAI with retry logic."""
@@ -87,14 +87,14 @@ async def process_youtube_audio_and_answer_query(youtube_url, query, output_dir=
 
     text_splitter = RecursiveCharacterTextSplitter(chunk_size=1500, chunk_overlap=150)
     text_chunks = text_splitter.split_text(transcribed_text)
-    
-    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001")
+    api_key = os.environ["GOOGLE_API_KEY"] == st.secrets["GOOGLE_API_KEY"]
+    embeddings = GoogleGenerativeAIEmbeddings(model="models/embedding-001",google_api_key=api_key)
     vector_store = FAISS.from_texts(text_chunks, embeddings)
     
     def build_qa_chain(vector_store, query):
         """Build and run the QA chain."""
         qa_chain = RetrievalQA.from_chain_type(
-            llm=ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0,google_api_key=st.secrets["GOOGLE_API_KEY"]),
+            llm=ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0,google_api_key=api_key),
             chain_type="stuff",
             retriever=vector_store.as_retriever(),
         )

@@ -4,6 +4,7 @@ from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from dotenv import load_dotenv
 import streamlit as st
+import os
 
 def general_chatbot(query: str, learning_style: str):
     load_dotenv()
@@ -20,7 +21,9 @@ def general_chatbot(query: str, learning_style: str):
 
     prompt = ChatPromptTemplate.from_template(template=template)
 
-    model = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0,google_api_key=st.secrets["GOOGLE_API_KEY"])
+    api_key = os.environ["GOOGLE_API_KEY"] == st.secrets["GOOGLE_API_KEY"]
+
+    model = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0,google_api_key=api_key)
 
     chain = (
             RunnablePassthrough()

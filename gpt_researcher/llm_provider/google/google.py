@@ -25,7 +25,7 @@ class GoogleProvider:
 
         """
         try:
-            api_key = st.secrets["GOOGLE_API_KEY"]
+            api_key = os.environ["GOOGLE_API_KEY"] == st.secrets["GOOGLE_API_KEY"]
         except:
             raise Exception(
                 "GEMINI API key not found. Please set the GEMINI_API_KEY environment variable.")

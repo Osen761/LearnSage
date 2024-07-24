@@ -14,6 +14,7 @@ import streamlit as st
 
 # Load environment variables
 load_dotenv()
+api_key = os.environ["GOOGLE_API_KEY"] == st.secrets["GOOGLE_API_KEY"]
 
 class Document:
     def __init__(self, page_content, metadata):
@@ -25,7 +26,7 @@ class DocumentIndexer:
         self.model_name = model_name
         self.local_qdrant_path = local_qdrant_path
         self.collection_name = collection_name
-        self.embedding_model = GoogleGenerativeAIEmbeddings(model=model_name, google_api_key=st.secrets["GOOGLE_API_KEY"])
+        self.embedding_model = GoogleGenerativeAIEmbeddings(model=model_name, google_api_key=api_key)
         self.qdrant = None
 
     def get_files(self, dir):
