@@ -55,8 +55,9 @@ if st.sidebar.button("Start New Learning Session"):
 
 if st.sidebar.button("Learning Style"):
     learning_style = st.sidebar.selectbox("Choose your learning style:", ["Auditory", "Read/Write", "Kinesthetic"])
-    st.session_state.learning_style = learning_style
-    st.sidebar.write(f"You selected {learning_style} learning style.")
+    if learning_style:
+        st.session_state.learning_style = learning_style
+        st.sidebar.write(f"You selected {learning_style} learning style.")
 
 # Quick Internet Search in Sidebar
 st.sidebar.subheader("Quick Internet Search")
