@@ -12,7 +12,6 @@ from google_api import analyze_documents, analyze_images, analyze_videos
 from General_qn_Chatbot import general_chatbot
 from summarization import summary
 from QandA import generate_and_answer, generate_questions
-from api import collect_api_keys
 
 # Initialize session state for storing responses and learning style
 if 'responses' not in st.session_state:
@@ -22,7 +21,26 @@ elif not isinstance(st.session_state.responses, list):
 if 'learning_style' not in st.session_state:
     st.session_state.learning_style = ""
 
-collect_api_keys()
+# Add API key input at the top of the sidebar
+st.sidebar.title("Configuration")
+
+
+
+# Input fields for API keys
+google_api_key = st.sidebar.text_input("Google API Key", "", type="password")
+assemblyai_api_key = st.sidebar.text_input("AssemblyAI API Key", "", type="password")
+tivaly_api_key = st.sidebar.text_input("Tivaly API Key", "", type="password")
+
+# Submit button in the sidebar
+if st.sidebar.button("Submit"):
+    # Storing the API keys in Streamlit's session state
+    st.session_state['GOOGLE_API_KEY'] = google_api_key
+    st.session_state['ASSEMBLYAI_API_KEY'] = assemblyai_api_key
+    st.session_state['TIVALY_API_KEY'] = tivaly_api_key
+
+# Example of accessing an API key from session state elsewhere in your application
+# if 'GOOGLE_API_KEY' in st.session_state:
+#     use_google_api(st.session_state['GOOGLE_API_KEY'])
 
 # Add "Start New Learning Session" button
 if st.sidebar.button("Start New Learning Session"):
