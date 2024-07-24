@@ -70,16 +70,30 @@ if st.sidebar.button("Search"):
     st.sidebar.write(results)
 
 # Home Page
-st.title('_:blue[LEARNSAGE:Personalized Learning for Everyone]_ :sunglasses:')
+st.title('_:blue[LEARNSAGE: Personalized Learning for Everyone]_ :sunglasses:')
 st.write("""
     Welcome to LearnSage  an AI Learning Assistant. Navigate through the sidebar to use the features.
-    - **Generate Report:** Create a detailed report on a topic of your choice.
-    - **Upload Files:** Upload documents to interact with and analyze.
-    - **Summarize Documents:** Get a summary of your documents.
     - **Ask Questions:** Ask any question and get instant answers.
+    - **Generate Report:** Create a detailed report on a topic of your choice.
+    - **Interact with your files:** Upload documents to interact with and analyze.
+    - **Interact with images:** Upload images and ask question.
+    - **Summarize Documents:** Get a summary of your documents.
     - **Quick Internet Search:** Perform quick searches on the web.
     - **Download Summary:** Download a summary of your learning session.
     - **Generate Q&A:** Create questions and answers based on your learning material.
+         
+    How It Works
+Upload Your Keys:
+"Start by uploading your learning keys to personalize your experience."
+
+Choose Your Learning Style:
+"Select a learning style that best suits you—whether it's visual, auditory, or kinesthetic."
+
+Select a Feature:
+"Pick a feature from the sidebar, such as report generation, document interaction, or quick summaries, and start your learning journey."
+
+Begin Learning:
+"Dive into personalized content and interactive materials designed to enhance your learning process."
          
 
   At Learning Sage, we believe that everyone has a unique way of learning. Our mission is to provide personalized educational experiences that help you achieve your goals. Whether you're a student, a professional, or a lifelong learner, Learning Sage is here to support your journey.
