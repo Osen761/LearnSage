@@ -70,9 +70,9 @@ if st.sidebar.button("Search"):
     st.sidebar.write(results)
 
 # Home Page
-st.title('_:blue[LEARNSAGE]_ :sunglasses:')
+st.title('_:blue[LEARNSAGE:Personalized Learning for Everyone]_ :sunglasses:')
 st.write("""
-    Welcome to the AI Learning Assistant. Navigate through the sidebar to use the features.
+    Welcome to LearnSage  an AI Learning Assistant. Navigate through the sidebar to use the features.
     - **Generate Report:** Create a detailed report on a topic of your choice.
     - **Upload Files:** Upload documents to interact with and analyze.
     - **Summarize Documents:** Get a summary of your documents.
@@ -80,6 +80,9 @@ st.write("""
     - **Quick Internet Search:** Perform quick searches on the web.
     - **Download Summary:** Download a summary of your learning session.
     - **Generate Q&A:** Create questions and answers based on your learning material.
+         
+
+  At Learning Sage, we believe that everyone has a unique way of learning. Our mission is to provide personalized educational experiences that help you achieve your goals. Whether you're a student, a professional, or a lifelong learner, Learning Sage is here to support your journey.
 """)
 
 # Sidebar Navigation

@@ -37,8 +37,4 @@ def search_and_generate_response(user_query):
     else:
         return "Please enter a query to search."
 
-# Example usage
-if __name__ == "__main__":
-    user_query = input("Enter your query: ")
-    results = search_and_generate_response(user_query)
-    print(results)
+
