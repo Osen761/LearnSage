@@ -85,7 +85,7 @@ st.write("""
 # Sidebar Navigation
 page = st.sidebar.selectbox("Choose a feature", [
     "Ask Questions", "Generate Report", "Interact with your Files", "Summarize Documents", 
-    "Interact with Images", "Interact With Videos", "Upload Files", "Summarize Documents", 
+    "Interact with Images", 
     "Interact with YouTube", "Download Summary", "Generate Q&A"])
 
 if page == "Ask Questions":
@@ -191,6 +191,7 @@ elif page == "Summarize Documents":
             # Step 4: Analysis
             if document_paths:
                 result = analyze_documents(question, document_paths)
+                st.session_state.responses.append(("summary", question, result))
                 st.write(result)
 
             # Step 5: Cleanup (optional)
@@ -214,6 +215,7 @@ elif page == "Interact with Images":
         if st.button('Analyze Images'):
             # Call the analyze_images function
             result = analyze_images(question, image_paths)
+            st.session_state.responses.append(("Image Interaction", question, result))
             
             # Display the resultt
             st.write(result)
@@ -224,24 +226,24 @@ elif page == "Interact with Images":
     else:
         st.sidebar.write("Please upload at least one image.")
 
-elif page == "Interact with Videos":
-    uploaded_videos = st.sidebar.file_uploader("Upload Videos", type=['mp4'], accept_multiple_files=True)
-    st.subheader("Interact with Videos")
-    question = st.text_input("Enter your question")
-    if st.button("Ask"):
-        temp_file_paths = []  # List to store paths of temporary files
-        for uploaded_video in uploaded_videos:
-            # Create a temporary file for each uploaded video
-            temp_file_path = tempfile.mktemp(suffix="." + uploaded_video.name.split('.')[-1])
-            # Copy the uploaded file content to the temporary file
-            with open(temp_file_path, "wb") as temp_file:
-                shutil.copyfileobj(uploaded_video, temp_file)
-            temp_file_paths.append(temp_file_path)
-        st.write("Answering question:", question)
-        # Pass the list of temporary file paths to the analyze_videos function
-        results = analyze_videos(question, temp_file_paths)
-        st.session_state.responses.append(("Video Interaction", question, results))
-        st.write(results)
+# elif page == "Interact with Videos":
+#     uploaded_videos = st.sidebar.file_uploader("Upload Videos", type=['mp4'], accept_multiple_files=True)
+#     st.subheader("Interact with Videos")
+#     question = st.text_input("Enter your question")
+#     if st.button("Ask"):
+#         temp_file_paths = []  # List to store paths of temporary files
+#         for uploaded_video in uploaded_videos:
+#             # Create a temporary file for each uploaded video
+#             temp_file_path = tempfile.mktemp(suffix="." + uploaded_video.name.split('.')[-1])
+#             # Copy the uploaded file content to the temporary file
+#             with open(temp_file_path, "wb") as temp_file:
+#                 shutil.copyfileobj(uploaded_video, temp_file)
+#             temp_file_paths.append(temp_file_path)
+#         st.write("Answering question:", question)
+#         # Pass the list of temporary file paths to the analyze_videos function
+#         results = analyze_videos(question, temp_file_paths)
+#         st.session_state.responses.append(("Video Interaction", question, results))
+#         st.write(results)
 
 elif page == "Download Summary":
     st.subheader("Download Summary of the Learning Session")
