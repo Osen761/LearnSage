@@ -68,44 +68,52 @@ if st.sidebar.button("Search"):
     st.sidebar.write("Searching for:", search_query)
     results = search_and_generate_response(search_query)
     st.sidebar.write(results)
-
-# Home Page
-st.title('_:blue[LEARNSAGE: Personalized Learning for Everyone]_ :sunglasses:')
-st.write("""
-    Welcome to LearnSage  an AI Learning Assistant. Navigate through the sidebar to use the features.
-    - **Ask Questions:** Ask any question and get instant answers.
-    - **Generate Report:** Create a detailed report on a topic of your choice.
-    - **Interact with your files:** Upload documents to interact with and analyze.
-    - **Interact with images:** Upload images and ask question.
-    - **Summarize Documents:** Get a summary of your documents.
-    - **Quick Internet Search:** Perform quick searches on the web.
-    - **Download Summary:** Download a summary of your learning session.
-    - **Generate Q&A:** Create questions and answers based on your learning material.
-         
-    How It Works
-Upload Your Keys:
-"Start by uploading your learning keys to personalize your experience."
-
-Choose Your Learning Style:
-"Select a learning style that best suits you—whether it's visual, auditory, or kinesthetic."
-
-Select a Feature:
-"Pick a feature from the sidebar, such as report generation, document interaction, or quick summaries, and start your learning journey."
-
-Begin Learning:
-"Dive into personalized content and interactive materials designed to enhance your learning process."
-         
-
-  At Learning Sage, we believe that everyone has a unique way of learning. Our mission is to provide personalized educational experiences that help you achieve your goals. Whether you're a student, a professional, or a lifelong learner, Learning Sage is here to support your journey.
-""")
-
-# Sidebar Navigation
 page = st.sidebar.selectbox("Choose a feature", [
     "Ask Questions", "Generate Report", "Interact with your Files", "Summarize Documents", 
     "Interact with Images", 
     "Interact with YouTube", "Download Summary", "Generate Q&A"])
+if page == "Home":
+# Home Page
+    st.title('_:blue[LEARNSAGE: Personalized Learning for Everyone]_ :sunglasses:')
+    st.write("""
+        # Welcome to LearnSage: An AI Learning Assistant
 
-if page == "Ask Questions":
+    LearnSage is a personalized learning platform that provides interactive educational experiences tailored to your unique learning style. Whether you're a student, a professional, or a lifelong learner, LearnSage is here to support your journey.
+
+    With LearnSage, you can:
+
+    - **Ask Questions:** Ask any question and get instant answers.
+    - **Generate Report:** Create a detailed report on a topic of your choice.
+    - **Interact with your files:** Upload documents to interact with and analyze.
+    - **Interact with images:** Upload images and ask questions.
+    - **Summarize Documents:** Get a summary of your documents.
+    - **Quick Internet Search:** Perform quick searches on the web.
+    - **Download Summary:** Download a summary of your learning session.
+    - **Generate Q&A:** Create questions and answers based on your learning material.
+
+    ## How It Works
+
+    **Upload Your Keys:**
+    "Start by uploading your learning keys to personalize your experience."
+
+    **Choose Your Learning Style:**
+    "Select a learning style that best suits you—whether it's visual, auditory, or kinesthetic."
+
+    **Select a Feature:**
+    "Pick a feature from the sidebar, such as report generation, document interaction, or quick summaries, and start your learning journey."
+
+    **Begin Learning:**
+    "Dive into personalized content and interactive materials designed to enhance your learning process."
+
+    ---
+
+    At Learning Sage, we believe that everyone has a unique way of learning. Our mission is to provide personalized educational experiences that help you achieve your goals. Whether you're a student, a professional, or a lifelong learner, Learning Sage is here to support your journey.
+    """)
+
+# Sidebar Navigation
+
+
+elif page == "Ask Questions":
     st.subheader("Ask Questions")
     question = st.text_input("Enter your question")
     if st.button("Ask"):
