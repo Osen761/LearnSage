@@ -14,7 +14,7 @@ import streamlit as st
 
 # Load environment variables
 load_dotenv()
-api_key = os.environ["GOOGLE_API_KEY"] == st.secrets["GOOGLE_API_KEY"]
+api_key = os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 
 class Document:
     def __init__(self, page_content, metadata):

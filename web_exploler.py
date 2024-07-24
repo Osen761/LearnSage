@@ -10,12 +10,12 @@ import streamlit as st
 def search_and_generate_response(user_query):
     # Load environment variables
     load_dotenv()
-    api_key = os.environ["TAVILY_API_KEY"] ==st.secrets["TAVILY_API_KEY"]
+    api_key = os.environ["TAVILY_API_KEY"] =st.secrets["TAVILY_API_KEY"]
  
 
     # Initialize TavilyClient and AI model
     tavily = TavilyClient(api_key=api_key)
-    api_key = os.environ["GOOGLE_API_KEY"] == st.secrets["GOOGLE_API_KEY"]
+    api_key = os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
     model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0,google_api_key=api_key)
     prompt_template = ChatPromptTemplate.from_template(template="""Answer the user’s question using the given context. In the context are documents that should contain an answer.make sure it is short and concise."
     'Documents:\n{context}\n\nQuestion: {query}'""")

@@ -32,7 +32,7 @@ class DocumentSearchAssistant:
         for i, res in enumerate(found_docs):
             context += f"{i}\n{res.page_content}\n\n"
             mappings[i] = res.metadata.get("path")
-        api_key = os.environ["GOOGLE_API_KEY"] == st.secrets["GOOGLE_API_KEY"]
+        api_key = os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
         
         model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0,google_api_key=api_key)
         prompt_template = (

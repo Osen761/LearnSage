@@ -20,7 +20,7 @@ def summary(learning_style:str,text:str) -> str:
 
     prompt = ChatPromptTemplate.from_template(template=template)
 
-    api_key = os.environ["GOOGLE_API_KEY"] == st.secrets["GOOGLE_API_KEY"]
+    api_key = os.environ["GOOGLE_API_KEY"] = st.secrets["GOOGLE_API_KEY"]
 
     model = ChatGoogleGenerativeAI(model="gemini-1.5-pro", temperature=0,google_api_key=st.secrets["GOOGLE_API_KEY"])
 

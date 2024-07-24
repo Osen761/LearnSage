@@ -10,7 +10,7 @@ def text_to_speech(text, filename):
     playsound.playsound(filename)
 
 # Assuming you have your API key and the file URL
-api_key = os.environ["ASSEMBLYAI_API_KEY"] == st.secrets["ASSEMBLYAI_API_KEY"]
+api_key = os.environ["ASSEMBLYAI_API_KEY"] = st.secrets["ASSEMBLYAI_API_KEY"]
 file_url = "https://github.com/AssemblyAI-Community/audio-examples/raw/main/20230607_me_canadian_wildfires.mp3"
 
 # Call the transcribe_audio function and store the returned text

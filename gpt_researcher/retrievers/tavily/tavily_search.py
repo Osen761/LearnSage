@@ -30,7 +30,7 @@ class TavilySearch():
         """
         # Get the API key
         try:
-            api_key = os.environ["TAVILY_API_KEY"]==st.secrets["TAVILY_API_KEY"]
+            api_key = os.environ["TAVILY_API_KEY"]=st.secrets["TAVILY_API_KEY"]
         except:
             raise Exception("Tavily API key not found. Please set the TAVILY_API_KEY environment variable. "
                             "You can get a key at https://app.tavily.com")
