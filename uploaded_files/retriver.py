@@ -1,6 +1,5 @@
 import os
 from dotenv import load_dotenv
-import markdown
 import qdrant_client
 from langchain_qdrant import Qdrant
 from langchain_google_genai import ChatGoogleGenerativeAI, GoogleGenerativeAIEmbeddings
@@ -40,6 +39,7 @@ class DocumentSearchAssistant:
             "Please always reference the document ID (in square brackets, for example [0],[1]) of the document that was used to make a claim. "
             "Use as many citations and documents as it is necessary to answer a question.\n"
             "Documents:\n{context}\n\nQuestion: {query}"
+            "generate content tailored to {learning_style} learners."
         )
         prompt = ChatPromptTemplate.from_template(template=prompt_template)
         chain = RunnablePassthrough() | prompt | model | StrOutputParser()

@@ -13,7 +13,8 @@ def general_chatbot(query: str, learning_style: str):
     Let the learning be addictive and captivating for the students, and help them to learn better and faster. Always answer the queries in that way based on their learning style. If you are not sure about the answer, clarify.
     
     Query: {query}
-    Generate content tailored to {learning_style} learners. For auditory learners, provide explanations through narratives. For reading/writing learners, present information in structured text with lists and references. For kinesthetic learners, incorporate practical examples and suggest interactive activities.
+    Generate content tailored to {learning_style} learners.
+    if the learning style is auditory, provide explanations through narratives. If the learning style is reading/writing, present information in structured text with lists and references. If the learning style is kinesthetic, incorporate practical examples 
     At the end of the response, always provide what can be a follow-up question to keep the discussion going."""
 
     prompt = ChatPromptTemplate.from_template(template=template)

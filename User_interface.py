@@ -190,7 +190,7 @@ elif page == "Summarize Documents":
 
             # Step 4: Analysis
             if document_paths:
-                result = analyze_documents(question, document_paths)
+                result = analyze_documents(question, st.session_state.learning_style,document_paths)
                 st.session_state.responses.append(("summary", question, result))
                 st.write(result)
 
@@ -214,7 +214,7 @@ elif page == "Interact with Images":
         
         if st.button('Analyze Images'):
             # Call the analyze_images function
-            result = analyze_images(question, image_paths)
+            result = analyze_images(question, st.session_state.learning_style,image_paths)
             st.session_state.responses.append(("Image Interaction", question, result))
             
             # Display the resultt

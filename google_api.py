@@ -73,7 +73,7 @@ def process_documents(document_paths):
 from PIL import Image
 
 
-def analyze_images(question, image_paths):
+def analyze_images(question,learning_style, image_paths):
     """
     Analyzes multiple images and answers a question about them.
     """
@@ -81,7 +81,7 @@ def analyze_images(question, image_paths):
     uploaded_files = [Image.open(image_path) for image_path in image_paths]
     
     # Define the prompt
-    prompt = f"You are an AI learning assistant called LearnSage. You are going to help learners analyze images and then answer any questions about the image: {question}\n\n"
+    prompt = f"You are an AI learning assistant called LearnSage. You are going to help learners analyze images and then answer any questions about the image: {question}\n\n generate content based the learners {learning_style}."
     
     # Choose a Gemini model.
     model = genai.GenerativeModel(model_name="gemini-1.5-pro")
@@ -91,16 +91,16 @@ def analyze_images(question, image_paths):
     
     return response.text
 
-def analyze_videos(question, video_paths):
+def analyze_videos(question,learning_style, video_paths):
     """
     Analyzes videos.
     """
     uploaded_files = process_videos(video_paths)
-    prompt = f"You are an ai learing assistant called LearnSage. you are going to help learners analyse videos and answer any questions about the video{question}\n\n"
+    prompt = f"You are an ai learing assistant called LearnSage. you are going to help learners analyse videos and answer any questions about the video{question}\n\ngenerate content based the learners {learning_style}."
     response = client.generate_content([prompt,uploaded_files], request_options={"timeout": 600})
     return response.text
 
-def analyze_documents(question, document_paths):
+def analyze_documents(question,learning_style, document_paths):
     """
     Analyzes documents.
     """
@@ -108,7 +108,7 @@ def analyze_documents(question, document_paths):
     # Select 3/4 of the chunks
     num_chunks = len(document_chunks)
     selected_chunks = document_chunks[:(3 * num_chunks) // 4]
-    prompt = f"You are an ai learing assistant called LearnSage. you are going to help learners analyse and summarize documents and the answer any questions about the documents  .{question}\n\n" + "\n\n".join(selected_chunks)
+    prompt = f"You are an ai learing assistant called LearnSage. you are going to help learners analyse and summarize documents and the answer any questions about the documents  .{question}\n\ngenerate content based the learners {learning_style}." + "\n\n".join(selected_chunks)
     response = client.generate_content([prompt], request_options={"timeout": 600})
     return response.text
 

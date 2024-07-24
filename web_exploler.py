@@ -14,7 +14,7 @@ def search_and_generate_response(user_query):
 
     # Initialize TavilyClient and AI model
     tavily = TavilyClient(api_key=api_key)
-    model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0, google_api_key=google_api_key)
+    model = ChatGoogleGenerativeAI(model="gemini-1.5-flash", temperature=0)
     prompt_template = ChatPromptTemplate.from_template(template="""Answer the user’s question using the given context. In the context are documents that should contain an answer.make sure it is short and concise."
     'Documents:\n{context}\n\nQuestion: {query}'""")
     output_parser = StrOutputParser()
