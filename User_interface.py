@@ -68,7 +68,7 @@ if st.sidebar.button("Search"):
     st.sidebar.write("Searching for:", search_query)
     results = search_and_generate_response(search_query)
     st.sidebar.write(results)
-page = st.sidebar.selectbox("Choose a feature", ["Home"
+page = st.sidebar.selectbox("Choose a feature", ["Home",
     "Ask Questions", "Generate Report", "Interact with your Files", "Summarize Documents", 
     "Interact with Images", 
     "Interact with YouTube", "Download Summary", "Generate Q&A"])
