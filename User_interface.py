@@ -37,10 +37,15 @@ if st.sidebar.button("Submit"):
     st.session_state['GOOGLE_API_KEY'] = google_api_key
     st.session_state['ASSEMBLYAI_API_KEY'] = assemblyai_api_key
     st.session_state['TIVALY_API_KEY'] = tivaly_api_key
-
-# Example of accessing an API key from session state elsewhere in your application
-# if 'GOOGLE_API_KEY' in st.session_state:
-#     use_google_api(st.session_state['GOOGLE_API_KEY'])
+    
+    # Writing the API keys to the .env file
+    with open('.env', 'w') as f:
+        f.write(f"GOOGLE_API_KEY={google_api_key}\n")
+        f.write(f"ASSEMBLYAI_API_KEY={assemblyai_api_key}\n")
+        f.write(f"TIVALY_API_KEY={tivaly_api_key}\n")
+    
+    # Notify the user that the keys have been saved
+    st.sidebar.success("API keys saved and exported successfully!")
 
 # Add "Start New Learning Session" button
 if st.sidebar.button("Start New Learning Session"):
