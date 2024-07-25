@@ -24,7 +24,7 @@ class DocumentSearchAssistant:
         return [{"id": i, "path": res.metadata.get("path"), "content": res.page_content} 
                 for i, res in enumerate(found_docs)]
 
-    def retrieve_and_answer(self, query, k=10):
+    def retrieve_and_answer(self, query,learning_style, k=10):
         found_docs = self.qdrant.similarity_search(query=query, k=k)
         
         context = ""
