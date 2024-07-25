@@ -53,11 +53,10 @@ if st.sidebar.button("Start New Learning Session"):
     st.sidebar.write("New learning session started. All previous data has been cleared.")
     st.experimental_rerun()  # Rerun the app to reset the state
 
-if st.sidebar.button("Learning Style"):
-    learning_style = st.sidebar.selectbox("Choose your learning style:", ["Auditory", "Read/Write", "Kinesthetic"])
-    if learning_style:
-        st.session_state.learning_style = learning_style
-        st.sidebar.write(f"You selected {learning_style} learning style.")
+learning_style = st.sidebar.selectbox("Choose your learning style:", ["Auditory", "Read/Write", "Kinesthetic"])
+if st.sidebar.button("Submit"):
+    st.session_state.learning_style = learning_style
+    st.sidebar.write(f"You selected {learning_style} learning style.")
 
 # Quick Internet Search in Sidebar
 st.sidebar.subheader("Quick Internet Search")
@@ -91,27 +90,24 @@ With LearnSage, you can:
 
 ## How It Works
 
-**1. Get API Keys:**
-First, obtain your API keys from the following services:
-- [Google AI Studio](https://aistudio.google.com/)
-- [Assembly AI](https://www.assemblyai.com/)
-- [Tavily](https://www.tavily.com/)
-
-**2. Upload Your Keys:**
-Start by uploading your learning keys to personalize your experience.
-
-**3. Choose Your Learning Style:**
+**1. Choose Your Learning Style:**
 Select a learning style that best suits you—whether it's visual, auditory, or kinesthetic.
 
-**4. Select a Feature:**
+**2. Select a Feature:**
 Pick a feature from the sidebar, such as report generation, document interaction, or quick summaries, and start your learning journey.
 
-**5. Begin Learning:**
+**3. Begin Learning:**
 Dive into personalized content and interactive materials designed to enhance your learning process.
 
 ---
 
 At Learning Sage, we believe that everyone has a unique way of learning. Our mission is to provide personalized educational experiences that help you achieve your goals. Whether you're a student, a professional, or a lifelong learner, Learning Sage is here to support your journey.
+             
+---
+             Developed by: Osen Muntu.
+             @osen_muntu
+             link to the project:
+                [LearnSage](https://github.com/Osen761/LearnSage)
 """)
 
 # Sidebar Navigation
