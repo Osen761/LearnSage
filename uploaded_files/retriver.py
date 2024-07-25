@@ -24,7 +24,7 @@ class DocumentSearchAssistant:
         return [{"id": i, "path": res.metadata.get("path"), "content": res.page_content} 
                 for i, res in enumerate(found_docs)]
 
-    def retrieve_and_answer(self, query, k=10):
+    def retrieve_and_answer(self, query,learning_style, k=10):
         found_docs = self.qdrant.similarity_search(query=query, k=k)
         
         context = ""
@@ -46,7 +46,7 @@ class DocumentSearchAssistant:
         prompt = ChatPromptTemplate.from_template(template=prompt_template)
         chain = RunnablePassthrough() | prompt | model | StrOutputParser()
         
-        result = chain.invoke({"context": context, "query": query})
+        result = chain.invoke({"context": context, "query": query,"learning_style":learning_style})
         document_file_names = [os.path.basename(doc.metadata.get("path")) for doc in found_docs]
         return result, document_file_names
 
