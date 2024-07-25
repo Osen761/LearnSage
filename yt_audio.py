@@ -42,14 +42,13 @@ async def download_and_convert_audio(video_url, output_dir, filename="%(id)s.%(e
         'yt-dlp',
         '-f', 'm4a/bestaudio/best',
         '-o', os.path.join(output_dir, filename),
-        '--postprocessor-args', 'ffmpeg:-vn -acodec copy',
         '--quiet',
         video_url
     ]
     
     try:
         # Run the command using subprocess
-        subprocess.run(command, check=True)
+        subprocess.run(command,capture_output=True, text=True)
         print("Download complete.")
     except subprocess.CalledProcessError as e:
         print(f"An error occurred: {e}")
