@@ -28,6 +28,9 @@ def transcribe_audio(file_path, api_key, max_retries=3):
             if attempt == max_retries - 1:
                 return None
 
+import asyncio
+import os
+
 async def download_and_convert_audio(video_url, output_dir, filename="%(id)s.%(ext)s"):
     """Download and convert YouTube video to audio using yt-dlp."""
     # Ensure output directory exists
@@ -44,25 +47,28 @@ async def download_and_convert_audio(video_url, output_dir, filename="%(id)s.%(e
     ]
     
     try:
-        # Run the yt-dlp command
+        # Run the yt-dlp command asynchronously
         process = await asyncio.create_subprocess_exec(
             *command,
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE
         )
+        
         stdout, stderr = await process.communicate()
         
         if process.returncode != 0:
             raise Exception(f"yt-dlp failed with error: {stderr.decode().strip()}")
-
-        # Assuming the output filename is based on the video ID and m4a extension
+        
+        # Extract video ID from filename and construct the output path
         video_id = filename.split('.')[0]
         audio_file_path = os.path.join(output_dir, f"{video_id}.m4a")
         print(f"Audio downloaded and converted successfully to: {audio_file_path}")
         return audio_file_path
+
     except Exception as e:
         print(f"Error downloading and converting audio: {str(e)}")
         return None
+
 def clean_up_files(*file_paths):
     """Delete specified files."""
     for file_path in file_paths:
