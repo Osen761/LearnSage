@@ -29,38 +29,36 @@ def transcribe_audio(file_path, api_key, max_retries=3):
                 return None
 
 async def download_and_convert_audio(video_url, output_dir, filename="%(id)s.%(ext)s"):
-    """Download and convert YouTube video to audio using yt-dlp."""
-    # Ensure output directory exists
-    os.makedirs(output_dir, exist_ok=True)
-    
-    # Construct the yt-dlp command
-    command = (
-        f'yt-dlp -f m4a/bestaudio/best '
-        f'-o "{os.path.join(output_dir, filename)}" '
-        f'--postprocessor-args "ffmpeg:-vn -acodec copy" '
-        f'--quiet '
-        f'"{video_url}"'
-    )
-    
+    """Download and convert YouTube video to audio using yt_dlp."""
+    ydl_opts = {
+        'format': 'm4a/bestaudio/best',  # The best audio version in m4a format
+        'outtmpl': os.path.join(output_dir, filename),  # Output template with directory and filename
+        'postprocessors': [{  # Extract audio using ffmpeg
+            'key': 'FFmpegExtractAudio',
+            'preferredcodec': 'm4a',
+        }],
+        'quiet': True,  # Suppress verbose output
+    }
+
     try:
-        # Run the yt-dlp command
-        result = subprocess.run(command, capture_output=True, text=True)
-        
-        if result.returncode != 0:
-            raise Exception(f"yt-dlp failed with error: {result.stderr}")
+        os.makedirs(output_dir, exist_ok=True)  # Ensure output directory exists
+
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            # Download video; ydl.download expects a list of URLs
+            error_code = ydl.download([video_url])
+
+        if error_code != 0:
+            raise Exception(f"yt-dlp failed to download the audio with error code: {error_code}")
 
         # Assuming the output filename is based on the video ID and m4a extension
         # This part might need adjustment based on actual requirements
-        # Here we extract the ID from the filename template
-        video_id = filename.split('.')[0]
+        video_id = ydl.extract_info(video_url, download=False)['id']
         mp3_file_path = os.path.join(output_dir, f"{video_id}.m4a")
         print(f"Audio downloaded and converted successfully to: {mp3_file_path}")
         return mp3_file_path
     except Exception as e:
         print(f"Error downloading and converting audio: {str(e)}")
         return None
-
-
 def clean_up_files(*file_paths):
     """Delete specified files."""
     for file_path in file_paths:
