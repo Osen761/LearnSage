@@ -104,8 +104,9 @@ Dive into personalized content and interactive materials designed to enhance you
 At Learning Sage, we believe that everyone has a unique way of learning. Our mission is to provide personalized educational experiences that help you achieve your goals. Whether you're a student, a professional, or a lifelong learner, Learning Sage is here to support your journey.
              
 ---
-Developed by: Osen Muntu.
-@osen_muntu
+Developed by: Osen Muntu...
+[@osen_muntu](https://x.com/osen_muntu)
+             
 link to the project:
 [LearnSage](https://github.com/Osen761/LearnSage)
 """)
