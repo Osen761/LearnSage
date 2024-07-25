@@ -46,7 +46,7 @@ class DocumentSearchAssistant:
         prompt = ChatPromptTemplate.from_template(template=prompt_template)
         chain = RunnablePassthrough() | prompt | model | StrOutputParser()
         
-        result = chain.invoke({"context": context, "query": query})
+        result = chain.invoke({"context": context, "query": query,"learning_style":learning_style})
         document_file_names = [os.path.basename(doc.metadata.get("path")) for doc in found_docs]
         return result, document_file_names
 
