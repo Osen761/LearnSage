@@ -191,7 +191,7 @@ elif page == "Interact with your Files":
         st.write("Asking question about the uploaded files:")
         st.write("Question:", question)
         retriever_instance = retriver.DocumentSearchAssistant()
-        answer, docs = retriever_instance.retrieve_and_answer(question)
+        answer, docs = retriever_instance.retrieve_and_answer(question,st.session_state.learning_style)
         st.session_state.responses.append(("File Interaction", question, answer))
         st.write("Answer:", answer)
         st.write("Documents used:", docs)
