@@ -65,12 +65,6 @@ async def download_and_convert_audio(video_url, output_dir, filename="%(id)s.%(e
         print(f"Error downloading and converting audio: {str(e)}")
         return None
 
-# Example usage
-if __name__ == "__main__":
-    video_url = "https://www.youtube.com/watch?v=example"
-    output_dir = "./downloads"
-    asyncio.run(download_and_convert_audio(video_url, output_dir))
-
 
 def clean_up_files(*file_paths):
     """Delete specified files."""
