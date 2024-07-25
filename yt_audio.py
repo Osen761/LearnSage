@@ -1,5 +1,6 @@
 import os
 import asyncio
+import subprocess
 import yt_dlp
 from dotenv import load_dotenv
 import assemblyai as aai
