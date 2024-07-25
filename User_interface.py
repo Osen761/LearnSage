@@ -194,7 +194,7 @@ elif page == "Interact with your Files":
         answer, docs = retriever_instance.retrieve_and_answer(question,st.session_state.learning_style)
         st.session_state.responses.append(("File Interaction", question, answer))
         st.write("Answer:", answer)
-        st.write("Documents used:", docs)
+        st.write("Documents used:", *docs)
 
 elif page == "Summarize Documents":
     
