@@ -46,19 +46,12 @@ async def download_and_convert_audio(video_url, output_dir, filename="%(id)s.%(e
         video_url
     ]
     
-    try:
-        # Run the yt-dlp command asynchronously
-        process = await asyncio.create_subprocess_exec(
-            *command,
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE
-        )
-        
-        stdout, stderr = await process.communicate()
-        
-        if process.returncode != 0:
-            raise Exception(f"yt-dlp failed with error: {stderr.decode().strip()}")
-        
+       try:
+        # Run the command using subprocess
+        subprocess.run(command, check=True)
+        print("Download complete.")
+    except subprocess.CalledProcessError as e:
+        print(f"An error occurred: {e}")
         # Extract video ID from filename and construct the output path
         video_id = filename.split('.')[0]
         audio_file_path = os.path.join(output_dir, f"{video_id}.m4a")
