@@ -28,24 +28,19 @@ def transcribe_audio(file_path, api_key, max_retries=3):
             if attempt == max_retries - 1:
                 return None
 
-import os
-import subprocess
-import asyncio
-
 async def download_and_convert_audio(video_url, output_dir, filename="%(id)s.%(ext)s"):
     """Download and convert YouTube video to audio using yt-dlp."""
     # Ensure output directory exists
     os.makedirs(output_dir, exist_ok=True)
     
     # Construct the yt-dlp command
-    command = [
-        'yt-dlp',
-        '-f', 'm4a/bestaudio/best',
-        '-o', os.path.join(output_dir, filename),
-        '--postprocessor-args', 'ffmpeg:-vn -acodec copy',
-        '--quiet',
-        video_url
-    ]
+     command = (
+        f'yt-dlp -f m4a/bestaudio/best '
+        f'-o "{os.path.join(output_dir, filename)}" '
+        f'--postprocessor-args "ffmpeg:-vn -acodec copy" '
+        f'--quiet '
+        f'"{video_url}"'
+    )
     
     try:
         # Run the yt-dlp command
